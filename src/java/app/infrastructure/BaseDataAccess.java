@@ -18,10 +18,10 @@ public abstract class BaseDataAccess {
     
     protected BaseModel populateStandardColumns(BaseModel model, ResultSet rs) throws SQLException{
         model.setCreatedByID(rs.getString("CreatedByID"));
-        model.setCreatedDateTime(rs.getDate("CreatedDateTime"));
-        model.setEffEndDate(rs.getDate("EffEndDate"));
-        model.setEffStartDate(rs.getDate("EffStartDate"));
-        model.setUpdateDateTime(rs.getDate("UpdateDateTime"));
+        model.setCreatedDateTime(rs.getTimestamp("CreatedDateTime"));
+        model.setEffEndDate(rs.getTimestamp("EffEndDate"));
+        model.setEffStartDate(rs.getTimestamp("EffStartDate"));
+        model.setUpdateDateTime(rs.getTimestamp("UpdatedDateTime"));
         model.setUpdatedByID(rs.getString("UpdatedByID"));
         model.setIsActive(rs.getBoolean("IsActive"));
         model.setIsSystem(rs.getBoolean("IsSystem"));

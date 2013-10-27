@@ -1,8 +1,11 @@
+<%@page import="app.model.LetsGoEvent"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
          pageEncoding="ISO-8859-1"%>
 <%@ taglib prefix="s" uri="http://stripes.sourceforge.net/stripes.tld"%>
-
+<%@page import="java.util.*" %>
+<%@page import="org.apache.commons.lang3.StringEscapeUtils"%>
+<%@page import="org.apache.commons.lang3.time.DateFormatUtils"%>
 <s:layout-render name="/WEB-INF/common/_layout/masterlayout.jsp">
     <s:layout-component name="TitleContent">
         SMU Hostel @ Prinsep        
@@ -96,10 +99,13 @@
         <div class="row">
             <div class="span8">
                 <h2>Newsfeed</h2>
-			<div class="fb-like-box" data-href="http://www.facebook.com/SMUResidencesPrinsep" data-width="600" data-height="500" data-colorscheme="light" data-show-faces="false" data-header="false" data-stream="true" data-show-border="false"></div>
+                <div class="fb-like-box" data-href="http://www.facebook.com/SMUResidencesPrinsep" 
+                     data-width="600" data-height="500" data-colorscheme="light" data-show-faces="false" 
+                     data-header="false" data-stream="true" data-show-border="false">
+                </div>
             </div>
             <div class="span4">
-                <h2>Hostel Wide Events</h2>                
+                <h2>Hostel Events</h2>                
                 <div id="example" class="k-content">
                     <div id="background" style="margin:0px">
                         <div id="calendar"></div>
@@ -108,24 +114,32 @@
                     </style>
                 </div> 
                 <hr/>
-                <h2>Let's Go Events</h2>
-                <table>
+                <h2>Let's Go Outings</h2>
+                <s:useActionBean beanclass="app.action.CommLifeActionBean" var="bean"/>
+                <table style="font-size:11pt; font-family: Helvetica">
+                <%
+                    List<LetsGoEvent> lgeHighlights = bean.getLetsGoEventHighlights();
+                    for(LetsGoEvent lge : lgeHighlights){
+                %>                
                     <tr>
-                        <td rowspan="99" style="padding-right: 10px;">
-                            <img src="${pageContext.request.contextPath}/content/images/letsgoevents/percyjackson_small.jpg" alt=""/>
+                        <td style="padding-right: 10px; padding-top: 15px; vertical-align: top;">
+                            <img src="${pageContext.request.contextPath}/content/images/letsgoevents/<%=StringEscapeUtils.escapeHtml4(lge.getEventPhotoUrl())%>" width="70px" height="100px" alt=""/>
                         </td>
-                        <td>
+                        <td style="padding-top: 15px;">
                             <p>
-                                <a href="${pageContext.request.contextPath}/EventsDetails.action">
-                                    <strong>Percy Jackson Movie Outing</strong>
+                                <a href="${pageContext.request.contextPath}/LetsGoEventsDetails.action?LetsGo=<%=lge.getEventID()%>">
+                                    <strong><%=StringEscapeUtils.escapeHtml4(lge.getTitle())%></strong>
                                 </a>                                
                             </p>
                             <p>                                    
-                                By Amy<br/>20th Sept 2013, 7:00pm
-                                <br/>The Cathay
+                                By <%=StringEscapeUtils.escapeHtml4(lge.getEventOrganizer().getFullName())%><br/><%=lge.getTitle()%><br/><%=StringEscapeUtils.escapeHtml4(DateFormatUtils.format(lge.getEventStartDateTime(), "dd MMM yyyy, hh:mma")) %>
+                                <br/><%=StringEscapeUtils.escapeHtml4(lge.getVenue())%>
                             </p>                              
                         </td>
-                    </tr>
+                    </tr>                
+                <%
+                    }
+                %> 
                 </table>
             </div>
         </div>

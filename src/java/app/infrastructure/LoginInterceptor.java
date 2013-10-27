@@ -29,7 +29,9 @@ public class LoginInterceptor implements Interceptor {
             LoginActionBean.class,
             CommLifeActionBean.class,
             HostelEventsActionBean.class,
-            LetsGoEventsActionBean.class
+            LetsGoEventsActionBean.class,
+            LetsGoEventsDetailsActionBean.class,
+            SampleActionBean.class
         );
 
     public Resolution intercept(ExecutionContext execContext)

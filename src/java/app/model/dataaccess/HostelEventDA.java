@@ -17,7 +17,9 @@ import java.util.ArrayList;
  * @author Lim
  */
 public class HostelEventDA extends BaseDataAccess {
-
+    
+    ArrayList<User> eventAdmins = new ArrayList<User>();
+    
     public ArrayList<HostelEvent> getValidHostelEvent_Highlight() {
         int hostelEventID = 0;
         HostelEvent event = null;
@@ -42,8 +44,8 @@ public class HostelEventDA extends BaseDataAccess {
                     //Create Hostel Event Object
                     event = new HostelEvent(hostelEventID,
                             rs.getString("EventTitle"),
-                            rs.getDate("StartDateTime"),
-                            rs.getDate("EndDateTime"),
+                            rs.getTimestamp("StartDateTime"),
+                            rs.getTimestamp("EndDateTime"),
                             rs.getString("Venue"),
                             rs.getString("Details"),
                             rs.getString("EventLargePhotoUrl"),
@@ -66,7 +68,6 @@ public class HostelEventDA extends BaseDataAccess {
 
     private ArrayList<User> getHostelEventAdmin(int hostelEventID) throws SQLException {
         User user = null;
-        ArrayList<User> eventAdmins = new ArrayList<User>();
 
         //Call database to retrieve list of admins
         DataAccessUtil dau = new DataAccessUtil();
@@ -77,12 +78,39 @@ public class HostelEventDA extends BaseDataAccess {
         //Iterate through the ResultSet to get the event admins (users)
         while (rs.next()) {
             //Create new user object
-            user = new User(rs.getInt("UserID"), rs.getString("FullName"), rs.getString("FacebookID"), rs.getString("SMUEmail"), null, null, null);
+            user = new User(rs.getInt("UserID"), rs.getString("FullName"), rs.getInt("FacebookID"), rs.getString("SMUEmail"), null, null, null);
 
             //Add event admin (user) to ArrayList
             eventAdmins.add(user);
         }
 
         return eventAdmins;
+    }
+    
+     public HostelEvent getHostelEvent_ByEventID(int hostelEventID) throws SQLException {
+         HostelEvent event = null;
+        //Call database to retrieve list of admins
+        DataAccessUtil dau = new DataAccessUtil();
+        //ArrayList<ResultSet> rss = dau.mySQLExecuteResultSet(sp_HostelEvent.asp_GetValidHostelEventAdmin_ByHostelEventID.toString(), hostelEventID);
+        //ResultSet rs = rss.get(0);
+        ResultSet rs = dau.mySQLExecuteResultSet(sp_HostelEvent.asp_GetValidHostelEvent_ByEventID.toString(), hostelEventID);
+        
+        //Iterate through the ResultSet to get the event admins (users)
+        while (rs.next()) {
+            //Create hostel event object
+             event = new HostelEvent(
+                            rs.getString("EventTitle"),
+                            rs.getTimestamp("StartDateTime"),
+                            rs.getTimestamp("EndDateTime"),
+                            rs.getString("Venue"),
+                            rs.getString("Details"),
+                            rs.getString("EventLargePhotoUrl"),
+                            rs.getString("EventSmallPhotoUrl"),
+                            rs.getString("EventDocRepository"),
+                            true,
+                            eventAdmins);
+        }
+
+        return event;
     }
 }

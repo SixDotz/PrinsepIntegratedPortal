@@ -6,8 +6,10 @@ package app.action;
 
 import app.infrastructure.BaseActionBean;
 import app.model.User;
+import app.model.dataaccess.UserDA;
 import net.sourceforge.stripes.action.RedirectResolution;
 import net.sourceforge.stripes.action.Resolution;
+import java.net.*;
 
 /**
  *
@@ -15,7 +17,6 @@ import net.sourceforge.stripes.action.Resolution;
  */
 public class LoginActionBean extends BaseActionBean {
 
-    private User user;
     private String facebookName;
 
     public LoginActionBean() {
@@ -23,17 +24,24 @@ public class LoginActionBean extends BaseActionBean {
     }
 
     public Resolution index() {
-        this.user = new User("Lim Li Long","94085084325", 
-                             "lilong.lim.2011@sis.smu.edu.sg", 
-                             null,  //Last Login Date 
-                             null,  //Last Logout Date
-                             null); //Roles <List>
-
-        this.user.setFacebookName(facebookName);
+        //Retrieve Facebook ID from Parameter
+        String strFacebookID = this.getParameter("facebookId");
+        String currentUrl =  URLDecoder.decode(this.getParameter("currentUrl"));
         
-        this.setSessionAttribute("user", user);
+        //Clean up currentUrl
+        currentUrl = currentUrl.replace(getRequest().getContextPath(),"");
+        
+        if(strFacebookID  != null){
+            long facebookID = Long.parseLong(strFacebookID);
+            
+            UserDA uDA = new UserDA();
+            User user= uDA.getValidUser_ByFacebookID(facebookID);
+            
+            this.setUser(user);
+        }
 
-        return new RedirectResolution(getView());
+        //Redirect user back to the page he/she was from
+        return new RedirectResolution(currentUrl);
     }
 
     public Resolution logout() {

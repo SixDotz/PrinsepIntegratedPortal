@@ -16,8 +16,15 @@ public class LetsGoEventComment extends BaseModel {
     private LetsGoEvent letsGoEvent;
     private User userID;
     private String comment;
-    
     private List<User> likes;
+    private User liker;
+    
+    public LetsGoEventComment(int commentID, LetsGoEvent letsGoEvent, User userID, String comment, List<User> likes, User liker) {
+        this(letsGoEvent, userID, comment, likes);
+        
+        this.commentID = commentID; 
+        this.liker = liker;
+    } 
 
     public LetsGoEventComment(int commentID, LetsGoEvent letsGoEvent, User userID, String comment, List<User> likes) {
         this(letsGoEvent, userID, comment, likes);
@@ -71,5 +78,13 @@ public class LetsGoEventComment extends BaseModel {
 
     public void setLikes(List<User> likes) {
         this.likes = likes;
+    }
+    
+    public void setLiker(User liker){
+        this.liker = liker;
+    }
+    
+    public User getLiker(){
+        return liker;
     }
 }

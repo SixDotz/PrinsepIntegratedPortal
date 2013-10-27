@@ -10,7 +10,8 @@ package app.action;
  */
 import app.infrastructure.BaseActionBean;
 import app.model.HostelEvent;
-import app.model.dataaccess.HostelEventDA;
+import app.model.LetsGoEvent;
+import app.model.dataaccess.LetsGoEventDA;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -19,6 +20,7 @@ import net.sourceforge.stripes.action.*;
 public class CommLifeActionBean extends BaseActionBean {
     // <editor-fold defaultstate="collapsed" desc="ActionBean Property Objects">
     private ArrayList<HostelEvent> hostelEventHighlights;
+    private ArrayList<LetsGoEvent> letsGoEventHighlights;
     
     public List<HostelEvent> getHostelEventHighlights() {
         ArrayList<HostelEvent> lst = hostelEventHighlights;
@@ -39,8 +41,21 @@ public class CommLifeActionBean extends BaseActionBean {
 
         return lst;
     }
+    
+    public List<LetsGoEvent> getLetsGoEventHighlights(){
+        ArrayList<LetsGoEvent> lst = letsGoEventHighlights;
+        
+        //Call data access to retrive lets go event highlights
+        LetsGoEventDA lgeDA = new LetsGoEventDA();
+        lst = lgeDA.getValidLetsGoEvent(3);
+        
+        System.out.println(lst.size());
+        
+        return lst;
+    }
+    
     // </editor-fold>
-
+    
     public CommLifeActionBean() {
         super("/WEB-INF/jsp/Index.jsp");
     }

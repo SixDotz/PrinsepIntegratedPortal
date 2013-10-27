@@ -8,6 +8,10 @@ package app.infrastructure;
  *
  * @author Lim
  */
+import app.model.Notification;
+import app.model.User;
+import app.model.dataaccess.NotificationDA;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import net.sourceforge.stripes.action.ActionBean;
@@ -21,6 +25,7 @@ import javax.servlet.http.HttpSession;
 
 public abstract class BaseActionBean implements ActionBean {
 
+    private final String STRNOTIFICATIONS = "NOTIFICATIONS";
     private String view;
     private ActionBeanContext ctx;
 
@@ -35,12 +40,12 @@ public abstract class BaseActionBean implements ActionBean {
     public void setContext(ActionBeanContext ctx) {
         this.ctx = ctx;
     }
-    
-    protected Object getServletContextAttribute(String name){
+
+    protected Object getServletContextAttribute(String name) {
         return this.ctx.getServletContext().getAttribute(name);
     }
-    
-    protected void setServletContextAttribute(String name, Object value){
+
+    protected void setServletContextAttribute(String name, Object value) {
         this.ctx.getServletContext().setAttribute(name, value);
     }
 
@@ -62,6 +67,33 @@ public abstract class BaseActionBean implements ActionBean {
 
     public void setSessionAttribute(String attributeName, Object value) {
         this.getSession().setAttribute(attributeName, value);
+    }
+
+    public String getParameter(String name) {
+        return getContext().getRequest().getParameter(name);
+    }
+
+    public String[] getParameters(String name) {
+        return getContext().getRequest().getParameterValues(name);
+    }
+
+    protected User getUser() {
+        return (User) this.getSessionAttribute("user");
+    }
+
+    protected void setUser(User user) {
+        this.setSessionAttribute("user", user);
+    }
+
+    protected void setNotification(ArrayList<Notification> notifications) {
+        //Save to Servlet Context
+        setServletContextAttribute(STRNOTIFICATIONS, notifications);
+
+    }
+
+    public ArrayList<Notification> getNotification() {
+        //Retrive from Servlet Context
+        return (ArrayList<Notification>) getServletContextAttribute(STRNOTIFICATIONS);
     }
 
     //public Date getSystemDate() {
@@ -111,6 +143,23 @@ public abstract class BaseActionBean implements ActionBean {
         return this.view;
     }
 
+    protected void postNotification(int eventId, int organizerID, String details) {
+        NotificationDA nDa = new NotificationDA();
+        nDa.InsertNotification(eventId, organizerID, this.getUser().getUserID(), details);
+    }
+
     @DefaultHandler
+    public Resolution defaultAction() {
+        User user = (User) this.getSessionAttribute("user");
+
+        if (user != null) {
+            NotificationDA n_da = new NotificationDA();
+
+            setNotification(n_da.getValidTopTenNotification_ByUserID(user.getUserID()));
+        }
+
+        return index();
+    }
+
     public abstract Resolution index();
 }

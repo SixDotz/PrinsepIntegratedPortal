@@ -1,8 +1,14 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
          pageEncoding="ISO-8859-1"%>
 <%@ taglib prefix="s" uri="http://stripes.sourceforge.net/stripes.tld"%>
+<%@page import="org.apache.commons.lang3.time.DateFormatUtils"%>
+<%@page import="org.apache.commons.lang3.StringEscapeUtils"%>
+<%@page import="org.apache.commons.lang3.StringEscapeUtils"%>
 <!DOCTYPE html>
-
+<%@page import="java.util.*" %>
+<%@page import="app.model.*" %>
+<%@page import="java.io.*" %>
+<%@page import="java.text.*" %>
 <s:layout-definition>
     <html lang="en">
         <head>
@@ -15,47 +21,26 @@
 
             <link href="/favicon.ico" rel="shortcut icon" type="image/x-icon" />
 
-            <meta name="viewport" content="width=device-width" />
-
             <!--Stylesheets-->
             <link rel='stylesheet' type='text/css' href='${pageContext.request.contextPath}/content/css/bootstrap.css'/>
             <link rel='stylesheet' type='text/css' href='${pageContext.request.contextPath}/content/css/kendo.common.min.css'/>
             <link rel='stylesheet' type='text/css' href='${pageContext.request.contextPath}/content/css/kendo.bootstrap.min.css'/>
             <link rel='stylesheet' type='text/css' href='${pageContext.request.contextPath}/content/css/site.css'/>
+            <link rel='stylesheet' type='text/css' href='${pageContext.request.contextPath}/content/css/notificationicon.css'/>
             <link rel='stylesheet' type='text/css' href='http://fonts.googleapis.com/css?family=Oswald'/>
 
             <!--Scripts-->
             <script src="${pageContext.request.contextPath}/scripts/jquery.min.js"></script>
+            <script src="${pageContext.request.contextPath}/scripts/jquery.isloading.min.js"></script>  
             <script src="${pageContext.request.contextPath}/scripts/kendo.web.min.js"></script>
             <script src="${pageContext.request.contextPath}/scripts/modernizr-2.6.2.js"></script>            
-            
+
             <!--Custom Scripts-->
             <script type="text/javascript">
-                $(document).ready(function() {
-                    $("#lnkNotif").kendoTooltip({
-                        width: 280,
-                        
-                        position: "bottom",
-                        filter: "a",
-                        autoHide: false,
-                        showOn: "click",
-                        animation: {
-                            open: {
-                              effects: "fade:in",
-                              duration: 500
-                            },
-                            close: {
-                              effects: "fade:out",
-                              duration: 300
-                            }
-                        },
-                        content: "<img style='float: left; padding-right: 10px;' src='${pageContext.request.contextPath}/content/images/profile/tommy.jpeg' alt='' height='50px' width='50px'/><div style='font-size: 9pt; text-align:left;'><b>Tommy Lee</b> is going to the Soccer match.<br/><br/>Posted 15 minutes ago.</div><br/><div style='padding-bottom:2px; margin-top:5px; padding-top:5px; border-top-width:1px; border-top-style:solid; border-top-color:#01175b;'><a href='${pageContext.request.contextPath}/Notification.action'>See All</a></div>"
-                    });
-                    
-                    $("#lnkNotif").bind("click", function() {
-                        return false;
-                     });
-                });
+                function redirectNotif(url){
+                    //alert(url);
+                    window.location = url;
+                }
             </script>
             <style type="text/css">
                 .k-tooltip-content {
@@ -69,12 +54,109 @@
                     font-size: 1.4em;
                     padding: 20px;
                     width: 160px;
-                    text-align: left;
+                    text-align: center;
                 }
             </style>
             <s:layout-component name="html_header" /> 
         </head>
         <body>
+            <%
+                int noOfNewNotifications = 0;
+                
+                SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss a");
+                User user = (User) session.getAttribute("user");
+                
+                if (user != null) {
+                    StringBuilder sb = new StringBuilder();
+                    StringBuilder sb2 = new StringBuilder();
+                    ArrayList<Notification> notifications = (ArrayList<Notification>) (session.getServletContext().getAttribute("NOTIFICATIONS"));
+
+                    if (notifications != null && !notifications.isEmpty()) {
+                        sb.append("<div>");
+                        sb.append("<h5 align='center'>Your recent notifications</h5>");
+
+                        Iterator<Notification> it = notifications.iterator();
+
+                        while (it.hasNext()) {
+                            sb.append("<hr style='border-top:0.5px' />");
+                            Notification notification = it.next();
+                            Date createdDateTime = notification.getCreatedDateTime();
+                            String bDateFormat = formatter.format(createdDateTime);
+                            
+                            sb.append("<div align='left' class='notificationLnk'");
+                            sb.append(" onClick='redirectNotif(&quot;");
+                            sb.append(notification.getRedirectUrl());
+                            sb.append("&quot;);'");
+                            sb.append("'");
+                            sb.append(" style='cursor: pointer;");
+                            
+                            if (notification.isRead() == false) {
+                                noOfNewNotifications++;
+                                sb.append(" color:black; font-weight:bold; font-size:14px;'>");
+                            } else {
+                                sb.append("'>");
+                            }
+
+                            sb.append("<img style='float: left; padding-left: 10px;' align='left' src='" + request.getContextPath() + "/content/images/profile/Person A.jpg' alt='' height='30px' width='30px'/>");
+                            sb.append(notification.getDescription() + "</br>");
+                            sb.append("<div style='font-size: 11px;'><i class='icon-time'></i> Posted on " + bDateFormat);
+                            sb.append("</div>");
+                            sb.append("</div>");
+
+                            //Build string of notification id
+                            sb2.append(notification.getNotificationID() + ",");
+                        }
+
+                        sb.append("</div>");
+                        sb.append("<hr />");
+                        sb.append("<a href='" + request.getContextPath() + "/Notification.action'>See All</a>");
+                    }
+                    else{
+                        sb.append("<h5>You have no notifications.</h5>");
+                    }
+            %>
+            <script type="text/javascript">
+                function onShow(e) {
+                    var action = "${pageContext.request.contextPath}/Notification.action?read=<%=sb2.toString()%>&markNotificationsRead=";
+
+                    //Hide little unread notification count when update is successful
+                    $("#noti_Container").css("display", "none");
+
+                    //Call actionbean to update notification read
+                    $.post(action, function(data) {
+
+                    });
+                }
+
+                $(document).ready(function() {
+                    $("#lnkNotif").kendoTooltip({
+                        width: 350,
+                        position: "bottom",
+                        filter: "a",
+                        autoHide: false,
+                        showOn: "click",
+                        show: onShow,
+                        animation: {
+                            open: {
+                                effects: "fade:in",
+                                duration: 500
+                            },
+                            close: {
+                                effects: "fade:out",
+                                duration: 300
+                            }
+                        },
+                        content: "<%=sb.toString()%>"
+                    });
+
+                    $("#alnkNotif").bind("onClick", function() {
+                        return false;
+                    });
+                });
+            </script>
+            <%
+                }
+            %>
             <div class="navbar navbar navbar-fixed-top">
                 <div class="navbar-inner">
                     <div class="container">
@@ -95,12 +177,18 @@
                                 <li><a href="${pageContext.request.contextPath}">Home</a></li>
                                 <li id="lnkEvents"><a href="${pageContext.request.contextPath}/HostelEvents.action">Hostel Events</a></li>
                                 <li id="lnkEvents"><a href="${pageContext.request.contextPath}/LetsGoEvents.action">Let's Go Outings</a></li>
-                                
+                                    <%
+                                        if (session.getAttribute("user") != null) {
+                                    %>
+                                <li id="lnkNotif"><a href="#">Notifications</a></li>    
+                                    <%
+                                        if (noOfNewNotifications > 0) {
+                                    %>
+                                <div id ="noti_Container" style="position: absolute; top:5px; left: 565px; color: red; font-size: 18px; font-weight:bold;"> 
+                                    <div class="noti_bubble"><%=noOfNewNotifications%></div>
+                                </div>
                                 <%
-                                    if(session.getAttribute("user") != null){
-                                %>
-                                <li id="lnkNotif"><a href="#">Notifications</a></li>
-                                <%
+                                        }
                                     }
                                 %>
                             </ul>
@@ -116,6 +204,7 @@
                 <hr />
                 <footer>
                     <p>&copy; 2013 - Singapore Management University Hostel @ Prinsep</p>
+                     <%=new Date()%>
                 </footer>
             </div>
         </body>

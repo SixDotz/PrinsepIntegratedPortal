@@ -16,7 +16,7 @@ public class User extends BaseModel {
 
     private int userID;
     private String fullName;
-    private String facebookID;
+    private long facebookID;
     private String smuEmail;
     private Date lastLoginDateTime;
     private Date lastLogoutDateTime;
@@ -26,13 +26,18 @@ public class User extends BaseModel {
     
     private List<Role> roles;
 
-    public User(int userID, String fullName, String facebookID, String smuEmail, Date lastLoginDateTime, Date lastLogoutDateTime, List<Role> roles) {
+    public User(int userID, String fullName, long facebookID, String smuEmail, Date lastLoginDateTime, Date lastLogoutDateTime, List<Role> roles, String facebookProfilePhotoUrl) {
+        this(fullName, facebookID, smuEmail, lastLoginDateTime, lastLogoutDateTime, roles);
+        this.facebookProfilePhotoUrl = facebookProfilePhotoUrl;
+        this.userID = userID;
+    }
+    public User(int userID, String fullName, long facebookID, String smuEmail, Date lastLoginDateTime, Date lastLogoutDateTime, List<Role> roles) {
         this(fullName, facebookID, smuEmail, lastLoginDateTime, lastLogoutDateTime, roles);
 
         this.userID = userID;
     }
 
-    public User(String fullName, String facebookID, String smuEmail, Date lastLoginDateTime, Date lastLogoutDateTime, List<Role> roles) {
+    public User(String fullName, long facebookID, String smuEmail, Date lastLoginDateTime, Date lastLogoutDateTime, List<Role> roles) {
         this.fullName = fullName;
         this.facebookID = facebookID;
         this.smuEmail = smuEmail;
@@ -58,11 +63,11 @@ public class User extends BaseModel {
         this.fullName = fullName;
     }   
 
-    public String getFacebookID() {
+    public long getFacebookID() {
         return facebookID;
     }
 
-    public void setFacebookID(String facebookID) {
+    public void setFacebookID(long facebookID) {
         this.facebookID = facebookID;
     }
 
