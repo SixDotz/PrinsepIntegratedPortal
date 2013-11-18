@@ -23,7 +23,6 @@ public class LetsGoEventsDetailsActionBean extends BaseActionBean {
 
     private final String EVENT = "EVENT";
     private final String COMMENT = "COMMENT";
-    private final String USERHASH = "USERHASH";
     private final String RSVPSTATUS = "RSVPSTATUS";
     public int commentId;
     public String status;
@@ -60,15 +59,6 @@ public class LetsGoEventsDetailsActionBean extends BaseActionBean {
     public ArrayList<LetsGoEventComment> getComments() {
         return null;
     }
-
-    public HashMap<Integer, User> getValidUserHash() {
-        //Retrive from Servlet Context
-        return (HashMap<Integer, User>) getServletContextAttribute(USERHASH);
-    }
-
-    public void setUserHash(HashMap<Integer, User> userHash) {
-        setSessionAttribute(USERHASH, userHash);
-    }
     
     public String getRsvpStatus(){
         return (String) getServletContextAttribute(RSVPSTATUS);
@@ -83,9 +73,6 @@ public class LetsGoEventsDetailsActionBean extends BaseActionBean {
         User user = this.getUser();
 
         //call the userDa to retrieve all the user objects, with updated fb profile
-        UserDA uda = new UserDA();
-        HashMap<Integer, User> userHash = uda.getAllUsers();
-        setUserHash(userHash);
         if (str_LetsGoID != null) {
             LetsGoEvent event;
             ArrayList<LetsGoEventComment> commentList;

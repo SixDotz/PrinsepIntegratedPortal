@@ -11,6 +11,7 @@ package app.infrastructure;
 import app.model.Notification;
 import app.model.User;
 import app.model.dataaccess.NotificationDA;
+import app.model.dataaccess.UserDA;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,6 +29,8 @@ public abstract class BaseActionBean implements ActionBean {
     private final String STRNOTIFICATIONS = "NOTIFICATIONS";
     private String view;
     private ActionBeanContext ctx;
+    
+    private final String USERHASH = "USERHASH";
 
     public BaseActionBean(String view) {
         this.view = view;
@@ -83,6 +86,15 @@ public abstract class BaseActionBean implements ActionBean {
 
     protected void setUser(User user) {
         this.setSessionAttribute("user", user);
+    }
+    
+    public HashMap<Integer, User> getUserHash() {
+        //Retrive from Servlet Context
+        return (HashMap<Integer, User>) getServletContextAttribute(USERHASH);
+    }
+
+    public void setUserHash(HashMap<Integer, User> userHash) {
+        setSessionAttribute(USERHASH, userHash);
     }
 
     protected void setNotification(ArrayList<Notification> notifications) {
@@ -157,6 +169,10 @@ public abstract class BaseActionBean implements ActionBean {
 
             setNotification(n_da.getValidTopTenNotification_ByUserID(user.getUserID()));
         }
+        
+        UserDA uda = new UserDA();
+        HashMap<Integer, User> userHash = uda.getAllUsers();
+        setUserHash(userHash);
 
         return index();
     }

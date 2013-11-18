@@ -81,10 +81,11 @@ public class LetsGoEventsNewActionBean extends BaseActionBean implements
         LetsGoEventDA da = new LetsGoEventDA();
 
         //Insert new event into database
-        da.insertNewEvent(userID, title, category, dateCal, venue, maxCap, details, contact, "thisIsAPhotoUrlHahaha");
+        int newLetsGoID = da.insertNewEvent(userID, title, category, dateCal, venue, maxCap, details, contact, "thisIsAPhotoUrlHahaha");
 
         //Redirect users back to LetsGoEvent page
-        return new RedirectResolution(LetsGoEventsActionBean.class);
+        //return new RedirectResolution(LetsGoEventsActionBean.class);
+        return new StreamingResolution("text/html", newLetsGoID+"");
     }
 
     @Override

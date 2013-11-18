@@ -10,7 +10,6 @@ import app.model.*;
 import app.model.enumeration.Enum_EventAttendee_Status;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -31,9 +30,23 @@ public class LetsGoEventDA extends BaseDataAccess {
         //NOTE: Parameters passed in MISSING- invite list
         //NOTE: return statement half done
         //RMB: to pass in endDateTime as null
-        return DataAccessUtil.mySQLExecuteNonQuery(sp_LetsGoEvent.asp_InsertLetsGoEvent.toString(),
+        DataAccessUtil da = new DataAccessUtil();
+        ResultSet rs = da.mySQLExecuteResultSet(sp_LetsGoEvent.asp_InsertLetsGoEvent.toString(),
                 organizerID, title, categoryID, startDateTime, null, venue, capacity, details,
                 contact, photoUrl);
+        
+        if(rs != null){
+            try{
+                rs.next();
+                
+                return rs.getInt("NewLetsGoID");
+            }
+            catch(SQLException e){
+                e.printStackTrace();
+            }
+        }
+        
+        return 0;
     }
 
     public ArrayList<LetsGoEvent> getValidLetsGoEvent(int numOfRows) {
@@ -260,7 +273,7 @@ public class LetsGoEventDA extends BaseDataAccess {
     }
     
     public String getRsvpStatus(int letsGoID, int loggedUserID){
-        String rsvpStatus = "";
+        String rsvpStatus = Enum_EventAttendee_Status.going.toString();
         String dbRsvpStatus = "";
         try {
             DataAccessUtil dau = new DataAccessUtil();

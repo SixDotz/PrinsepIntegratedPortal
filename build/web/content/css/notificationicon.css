@@ -1,0 +1,25 @@
+
+
+.noti_Container {
+position:relative;
+border:1px solid blue; /* This is just to show you where the container ends */
+width:16px;
+height:16px;
+cursor: pointer;
+}
+.noti_bubble {
+position:absolute;
+top: -13px;
+right:-14px;
+padding-right:5px;
+padding-left: 5px;
+padding-top: 3px;
+background-color:#C90D00;
+color:white;
+font-weight:bold;
+font-size:0.90em;
+font-family: Futura Std Book;
+
+border-radius:2px;
+box-shadow:2px 2px 2px gray;
+}
