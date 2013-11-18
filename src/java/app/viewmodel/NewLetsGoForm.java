@@ -5,6 +5,8 @@
 package app.viewmodel;
 
 import java.util.ArrayList;
+import java.util.List;
+import net.sourceforge.stripes.action.FileBean;
 
 /**
  *
@@ -20,10 +22,11 @@ public class NewLetsGoForm {
     private String contact;
     private String details;
     private ArrayList friends;
+    private List<FileBean> photoUrl;
     
     public NewLetsGoForm(){}
 
-    public NewLetsGoForm(String title, int category, String date, String time, String venue, int capacity, String contact, String details, ArrayList friends) {
+    public NewLetsGoForm(String title, int category, String date, String time, String venue, int capacity, String contact, String details, ArrayList friends, List<FileBean> photoUrl) {
         this.title = title;
         this.category = category;
         this.date = date;
@@ -33,6 +36,7 @@ public class NewLetsGoForm {
         this.contact = contact;
         this.details = details;
         this.friends = friends;
+        this.photoUrl = photoUrl;
     }
     
     public String getTitle() {
@@ -106,5 +110,12 @@ public class NewLetsGoForm {
     public void setFriends(ArrayList friends) {
         this.friends = friends;
     }
-    
+
+    public List<FileBean> getPhotoUrl() {
+        return photoUrl;
+    }
+
+    public void setPhotoUrl(List<FileBean> photoUrl) {
+        this.photoUrl = photoUrl;
+    }    
 }

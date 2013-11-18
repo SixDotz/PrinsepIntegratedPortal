@@ -100,8 +100,9 @@
                             }
 
                             sb.append("<img class='img-circle' style='float: left;' align='left' src='" + userHash.get(notification.getSentByUser().getUserID()).getFacebookProfilePhotoUrl() + "' alt='' height='30px' width='30px'/>");
-                            sb.append(notification.getDescription() + "</br>");
-                            sb.append("<div style='font-size: 11px;'><i class='icon-time'></i> Posted on " + bDateFormat);
+                            sb.append("<div>");
+                            sb.append(notification.getDescription() + "</br>"); 
+                            sb.append("<b style='font-size: 11px;'><i class='icon-time'></i> Posted on " + bDateFormat + "</b>");
                             sb.append("</div>");
                             sb.append("</div>");
 

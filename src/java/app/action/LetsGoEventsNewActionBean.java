@@ -8,8 +8,11 @@ import app.infrastructure.BaseActionBean;
 import app.model.User;
 import app.model.dataaccess.LetsGoEventDA;
 import app.viewmodel.NewLetsGoForm;
+import java.io.File;
+import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import net.sourceforge.stripes.action.*;
 import net.sourceforge.stripes.validation.*;
 
@@ -64,6 +67,7 @@ public class LetsGoEventsNewActionBean extends BaseActionBean implements
         String[] timeStr = time.split(":");
         String hourStr = timeStr[0];
         String minStr = timeStr[1].substring(0, 2);
+        String ampm = timeStr[1].substring(3, 5);
 
         //Change string date to integer
         int year = Integer.parseInt(dateStr[2]);
@@ -71,21 +75,43 @@ public class LetsGoEventsNewActionBean extends BaseActionBean implements
         int day = Integer.parseInt(dateStr[1]);
         int hour = Integer.parseInt(hourStr);
         int min = Integer.parseInt(minStr);
+        if(ampm.equalsIgnoreCase("PM")){
+            hour += 12;
+        }
 
         //convert to date object
         Calendar cal = Calendar.getInstance();
         cal.set(year, month, day, hour, min, 0);
         Date dateCal = cal.getTime();
 
+        //Get image file of outing & save to disk
+        File photoFile;
+        List<FileBean> attachments = newLetsGoForm.getPhotoUrl();
+        if (attachments != null) {
+            for (FileBean attachment : attachments) {
+                if (attachment != null) {
+                    if (attachment.getSize() > 0) {
+                        String fileName = attachment.getFileName();
+                        photoFile = new File(fileName);
+                        try {
+                            attachment.save(photoFile);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+        }
+
         //Create new data access object
         LetsGoEventDA da = new LetsGoEventDA();
 
         //Insert new event into database
-        int newLetsGoID = da.insertNewEvent(userID, title, category, dateCal, venue, maxCap, details, contact, "thisIsAPhotoUrlHahaha");
+        int newLetsGoID = da.insertNewEvent(userID, title, category, dateCal, venue, maxCap, details, contact, "defaultOuting.jpg");
 
         //Redirect users back to LetsGoEvent page
         //return new RedirectResolution(LetsGoEventsActionBean.class);
-        return new StreamingResolution("text/html", newLetsGoID+"");
+        return new StreamingResolution("text/html", newLetsGoID + "");
     }
 
     @Override

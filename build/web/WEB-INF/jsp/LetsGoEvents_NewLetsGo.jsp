@@ -10,6 +10,8 @@
                 .val('')
                 .removeAttr('checked')
                 .removeAttr('selected');
+        
+        $("#frmCreateLetsGo").kendoValidator().data("kendoValidator").hideMessages();
     }
 
     $(document).ready(function() {
@@ -80,12 +82,21 @@
         $("#inputCategory").kendoDropDownList();
 
         $("#inputMaxCap").kendoNumericTextBox({
-            min: 0
+            min: 0,
+            decimals: 0,
+            step: 1,
+            format: '#'
         });
 
-        $("#inputPhoto").kendoUpload({
-            multiple: false
-        });
+        //$("#inputPhoto").kendoUpload({
+        //    multiple: false,
+        //    template: kendo.template($('#fileTemplate').html()),
+        //    async: {
+        //       saveUrl: "save",
+        //        removeUrl: "remove",
+        //        autoUpload: false
+        //    }
+        //});
 
         $("#btnSubmitNewLetsGoCreate").bind("click", function(e) {
             //Prevent the default form submit
@@ -132,6 +143,10 @@
                 });
             }
         });
+        
+        $("#btnReset").bind("click", function(){
+            resetNewLetsGoForm();
+        });
 
         $("#btnCancel").bind("click", function() {
             //$(this).closest('form').find("input[type=text], textarea").val("");
@@ -145,8 +160,6 @@
         $("#btnViewDetails").bind("click", function() {
             window.location = "${pageContext.request.contextPath}/LetsGoEventsDetails.action?LetsGo=" + this.value;
         });
-
-
     });
 </script>
 <style type="text/css">
@@ -161,21 +174,25 @@
     .k-select{
         padding-top:2px;
     }
+    .mandatory{
+        color:#C90D00;
+        font-size:14pt;
+    }
 </style>
 <div id="container" style="position:relative; background: rgba(0,0,0,0.5)"></div>
-<s:form id="frmCreateLetsGo" beanclass="app.action.LetsGoEventsNewActionBean">
+<s:form id="frmCreateLetsGo" beanclass="app.action.LetsGoEventsNewActionBean" enctype="multipart/form-data">
     <div  style="max-height:400px; overflow:auto;">
         <ul class="forms forms2 formsul" style="margin-right: 20px;">
             <li>
-                <label class="control-label" for="inputTitle">Title:</label>
+                <label class="control-label" for="inputTitle">Title:<b class="mandatory">*</b></label>
                 <div class="controls formctrlpad">
                     <input id="title" style="width:100%" name="newLetsGoForm.title" type="text" 
                            placeholder="Name of the outing" required validationMessage="Please enter an outing name." />
                 </div>
             </li>
             <li>
-                <label class="control-label" for="inputCategory">Category:</label>
-                <div class="controls">
+                <label class="control-label" for="inputCategory">Category:<b class="mandatory">*</b></label>
+                <div class="controls formctrlpad">
                     <select id="inputCategory" style="width:205px;" name="newLetsGoForm.category"
                             required data-required-msg="Please select outing categpory">
                         <option value="1" selected="true">BBQ</option>
@@ -186,63 +203,66 @@
                 </div>
             </li>
             <li>
-                <label class="control-label" for="inputDate">Date:</label>
-                <div class="controls">
+                <label class="control-label" for="inputDate">Date:<b class="mandatory">*</b></label>
+                <div class="controls formctrlpad">
                     <input id="inputDate" style="width:205px;" name="newLetsGoForm.date" type="date" 
                            placeholder="Outing date" required data-required-msg="Please select the outing date"/>
                     <span class="k-invalid-msg" data-for="newLetsGoForm.date"></span>
                 </div>
             </li>
             <li>
-                <label class="control-label" for="inputTime">Time:</label>
-                <div class="controls">
+                <label class="control-label" for="inputTime">Time:<b class="mandatory">*</b></label>
+                <div class="controls formctrlpad">
                     <input id="inputTime" style="width:205px;" name="newLetsGoForm.time" type="time"
                            placeholder="Outing time" required data-required-msg="Please select the outing time"/>
                     <span class="k-invalid-msg" data-for="newLetsGoForm.time"></span>
                 </div>
-            </li>
+            </li>            
+        </ul>
+        <ul class="forms forms2 formsul">
             <li>
-                <label class="control-label" for="inputVenue">Venue:</label>
+                <label class="control-label" for="inputVenue">Venue:<b class="mandatory">*</b></label>
                 <div class="controls formctrlpad">
                     <input id="inputVenue" name="newLetsGoForm.venue" class="k-input" type="text"
                            placeholder="Where are we going?" required data-required-msg="Please enter the outing venue"/>
                 </div>
             </li>
             <li>
-                <label class="control-label" for="inputContact">Contact Number:</label>
+                <label class="control-label" for="inputContact">Contact Number:<b class="mandatory">*</b></label>
                 <div class="controls formctrlpad">
                     <input id="inputContact" name="newLetsGoForm.contact" class="k-input" type="tel"
                            placeholder="Contact number" required data-required-msg="Please enter your contact number"/>
                 </div>
             </li>
-        </ul>
-        <ul class="forms forms2 formsul">
             <li>
                 <label class="control-label" for="inputMaxCap">Max Capacity:</label>
-                <div class="controls">
-                    <input id="inputMaxCap" style="width:205px;" name="newLetsGoForm.capacity" type="text"
+                <div class="controls formctrlpad" >
+                    <input id="inputMaxCap" style="width: 100%;" name="newLetsGoForm.capacity" type="number"
                            placeholder="Max no. of attendees if any" />
                 </div>
             </li>
             <li>
-                <label class="control-label" for="inputDetails">Details:</label>
-                <div class="controls">
-                    <textarea id="inputDetails" name="newLetsGoForm.details" class="k-input" rows="3"
-                              placeholder="Outing details" required data-required-msg="Please enter outing details"></textarea>
+                <label class="control-label" for="inputPhoto">Outing Photo:</label>
+                <div class="controls formctrlpad">
+                    
+                    <input id="inputPhoto" type="file" name="newLetsGoForm.photoUrl" style="width:100%"/>
+                    
+                    
                 </div>
             </li>
+        </ul>
+        <ul class="forms" style="text-align:left; margin-left: 10px; margin-top: 10px; width: 435px;">
             <li>
-                <!--<label class="control-label formlblpad" for="inputPhoto">Photo:</label>-->
-            </li>
+                <label class="control-label" for="inputDetails">Details:<b class="mandatory">*</b></label>
+                <div class="controls">
+                    <textarea id="inputDetails" name="newLetsGoForm.details" class="k-input" rows="3" style="width:100%"
+                              placeholder="Outing details" required data-required-msg="Please enter outing details"></textarea>
+                </div>
+            </li>            
         </ul>
     </div>
     <ul class="forms form-actions" style="text-align:right; margin: 0; width: 425px;">
         <li>
-            <!--
-            <s:submit id="btnSubmitNewLetsGoCreate" class="btn btn-primary" name="createLetsGo" value="Create"
-                      style="width:100px; height:30px;"/>
-            <s:reset value="Reset" name="reset" id="btnReset" class="btn" style="width:80px; height:30px;" />
-            -->
             <button id="btnSubmitNewLetsGoCreate" name="createLetsGo" type="button" class="btn btn-primary"><i class="icon-star icon-white"></i> Create Outing</button>
             <button id="btnReset" type="button" class="btn"><i class="icon-refresh"></i> Reset</button>
             <button id="btnCancel" type="button" class="btn"><i class="icon-remove"></i> Cancel</button>        

@@ -203,7 +203,7 @@
 
                 $("#lstFriends").kendoListView({
                     dataSource: ds,
-                    template: '<div><img class="tag-image" src=\"#: Photo #\" alt=\"#: FullName #\" />' +
+                    template: '<div style="padding:5px;"><img class="tag-image img-rounded" src=\"#: Photo #\" alt=\"#: FullName #\" />' +
                             '<strong>#: FullName #</strong></div>',
                     selectable: "single",
                     change: function(e) {
@@ -320,7 +320,7 @@
     <s:layout-component name="FeaturedContent">
         <s:useActionBean beanclass="app.action.LetsGoEventsDetailsActionBean" var="details"/>
         <div class="topdiv">
-            <button id="btnGoToEvents" class="btn btn-info"><i class="icon-calendar icon-white"></i> Go to All Lets Go Outing</button>
+            <button id="btnGoToEvents" class="btn btn-info"><i class="icon-calendar icon-white"></i> Go to All Outings</button>
             <%
                 if (user != null) {
             %>
@@ -337,10 +337,10 @@
         <div id="windInviteFriends" style="width:500px">
             <s:form beanclass="app.action.LetsGoEventsDetailsActionBean" method="post" class="form-search">
                 <div style="width:100%;">
-                    <select id="invitees" multiple="multiple" data-placeholder="Select friends to invite..."></select>
+                    <select id="invitees" multiple="multiple" data-placeholder="Select residents to invite..."></select>
                 </div> 
                 <div>
-                    <div id ="lstFriends"></div>
+                    <div id ="lstFriends" style="overflow: auto; height:200px"></div>
                 </div>
                 <div style="text-align:right; height: 10px; vertical-align: middle; padding-top: 20px;">
                     <button id="btnSubmit" type="submit" class="btn btn-primary" name="inviteResidents"><i class=" icon-ok icon-white"></i> Invite Residents</button>
@@ -527,9 +527,9 @@
                                 <tr>
                                     <td>
                                         <!--<img style="padding-right: 10px; padding-top: 5px;" src='${pageContext.request.contextPath}/content/images/profile/sudip.png' alt='' height='80px' width='80px'/>-->
-                                        <img style="padding-right: 10px; padding-top: 5px;" src='<%=commenter.getFacebookProfilePhotoUrl()%>' alt='' height='80px' width='80px'/>
+                                        <img class="img-rounded" style="padding-right: 10px; padding-top: 15px;" src='<%=commenter.getFacebookProfilePhotoUrl()%>' alt='' height='80px' width='80px'/>
                                     </td>
-                                    <td style="padding-top: 20px;">
+                                    <td style="padding-top: 15px; vertical-align: top;">
                                         <div style="font-size: 10pt;">
                                             <strong><%=commenter.getFullName()%>&nbsp;&nbsp;&nbsp;&nbsp;</strong><i class="icon-time"></i> Posted on <%=StringEscapeUtils.escapeHtml4(DateFormatUtils.format(comment.getCreatedDateTime(), "dd MMM yyyy, hh:mma"))%></label>
                                             <p>

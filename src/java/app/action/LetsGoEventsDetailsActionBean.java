@@ -149,7 +149,7 @@ public class LetsGoEventsDetailsActionBean extends BaseActionBean {
         for (String strInviteeUserID : invitees) {
             int inviteeUserID = Integer.parseInt(strInviteeUserID);
             da.UpdateInsertLetsGoAttendee(eventID, inviteeUserID, Enum_EventAttendee_Status.pending.toString());
-            this.postNotification(eventID, inviteeUserID, "You have been invited to " + eventTitle + ".");
+            this.postNotification(eventID, inviteeUserID, getUser().getFullName() + " has invited to you to " + eventTitle + ".");
 
         }
 

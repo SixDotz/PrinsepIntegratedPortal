@@ -68,7 +68,7 @@
                     switch (btnId) {
                         case "btnAllEvents":
                             //Change title
-                            $("#FullListHeader").html("All Events");
+                            $("#FullListHeader").html("All Outings");
 
                             //Set hiddenfield value
                             $("#hfSubNav").val("hero-unit");
@@ -84,7 +84,7 @@
 
                         case "btnMyEvents":
                             //Change title
-                            $("#FullListHeader").html("My Initiated Outing");
+                            $("#FullListHeader").html("My Initiated Outings");
 
                             //Set hiddenfield value
                             $("#hfSubNav").val("myEvent");
@@ -92,7 +92,7 @@
 
                         case "btnAttending":
                             //Change title
-                            $("#FullListHeader").html("Let's Go Outings I'm Attending");
+                            $("#FullListHeader").html("Outings I have joined");
 
                             //Set hiddenfield value
                             $("#hfSubNav").val("attending");
